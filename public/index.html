@@ -4,33 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestion des Coupons SCEA</title>
-  <!-- Inclure React et ReactDOM via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/react@17/umd/react.development.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6/babel.min.js"></script>
-  <!-- Inclure Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100">
   <div id="root"></div>
   <script type="text/babel">
-    // Composant principal pour gérer les ménages et les coupons
     const App = () => {
       const [household, setHousehold] = React.useState({ name: '', phone: '', location: '' });
       const [coupon, setCoupon] = React.useState(null);
       const [message, setMessage] = React.useState('');
 
-      // Mettre à jour les champs du formulaire
       const handleInputChange = (e) => {
         setHousehold({ ...household, [e.target.name]: e.target.value });
       };
 
-      // Enregistrer un ménage
       const registerHousehold = async (e) => {
         e.preventDefault();
         try {
-          const response = await fetch('http://localhost:5000/api/households/register', { // Changé de 5000 à 6000
+          const response = await fetch('http://localhost:8080/api/households/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(household),
@@ -39,18 +34,18 @@
           setMessage(data.message);
           setHousehold({ name: '', phone: '', location: '' });
         } catch (error) {
+          console.error('error fecth',error);
           setMessage('Erreur lors de l’enregistrement');
         }
       };
 
-      // Générer un coupon
       const generateCoupon = async () => {
         if (!household.phone) {
           setMessage('Veuillez enregistrer un ménage avec un numéro de téléphone.');
           return;
         }
         try {
-          const response = await fetch('http://localhost:5000/api/coupons/issue', { // Changé de 5000 à 6000
+          const response = await fetch('http://localhost:8080/api/coupons/issue', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone: household.phone }),
@@ -64,6 +59,27 @@
           }
         } catch (error) {
           setMessage('Erreur lors de la génération du coupon');
+        }
+      };
+
+      const updateConstruction = async () => {
+        const household_id = prompt('Entrez l\'ID du ménage :');
+        const company_id = prompt('Entrez l\'ID de l\'entreprise :');
+        const status = prompt('Entrez le statut (par exemple, approved ou pending) :');
+        if (!household_id || !company_id || !status) {
+          setMessage('Tous les champs sont requis');
+          return;
+        }
+        try {
+          const response = await fetch('http://localhost:8080/api/construction/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ household_id, company_id, status }),
+          });
+          const data = await response.json();
+          setMessage(data.message);
+        } catch (error) {
+          setMessage('Erreur lors de la mise à jour de la construction');
         }
       };
 
@@ -128,11 +144,20 @@
             )}
             {message && <p className="mt-2 text-red-600">{message}</p>}
           </div>
+          <div className="bg-white p-6 rounded shadow mt-4">
+            <h2 className="text-xl mb-4">Mettre à jour une construction</h2>
+            <button
+              onClick={updateConstruction}
+              className="bg-purple-500 text-white px-4 py-2 rounded"
+            >
+              Mettre à jour la construction
+            </button>
+            {message && <p className="mt-2 text-red-600">{message}</p>}
+          </div>
         </div>
       );
     };
 
-    // Rendu de l’application
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>

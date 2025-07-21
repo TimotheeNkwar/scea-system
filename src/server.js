@@ -17,6 +17,7 @@ app.use(express.json());
 
 // Initialiser la base de données
 initDatabase();
+initDatabase().then(() => console.log('Database initialized'));
 
 // Routes
 app.use('/api/households', householdRoutes);

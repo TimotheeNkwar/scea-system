@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
     );
     res.json({ message: 'Ménage enregistré avec succès', id: result.rows[0].id });
   } catch (err) {
-    console.error(err);
+    console.error(err); // Vérifie cette ligne dans les logs
     res.status(500).json({ message: 'Erreur lors de l’enregistrement' });
   }
 });
