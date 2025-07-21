@@ -1,0 +1,18 @@
+/* Styles personnalisés pour l’application SCEA */
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 800px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+button:hover {
+  opacity: 0.9;
+}

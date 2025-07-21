@@ -1,0 +1,17 @@
+{
+  "name": "scea-system",
+  "version": "1.0.0",
+  "description": "Système de gestion des coupons électroniques pour l’assainissement",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "",
+    "pg": "^8.16.3",
+    "sqlite3": "^5.0.2",
+    "twilio": "^5.7.3"
+  }
+}
