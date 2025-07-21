@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEA - Système de Coupons Électroniques pour l'Assainissement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dark {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --accent-color: #4fd1c5;
+            --card-bg: #2d3748;
+        }
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #edf2f7;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --accent-color: #4299e1;
+            --card-bg: #ffffff;
+        }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .card {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar {
+            background-color: var(--bg-secondary);
+        }
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e2e8f0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--accent-color);
+            transition: width 0.5s ease;
+        }
+        .flowchart {
+            position: relative;
+            padding: 20px;
+        }
+        .flowchart-step {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            z-index: 2;
+        }
+        .flowchart-step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background-color: var(--accent-color);
+            z-index: 1;
+        }
+        .flowchart-arrow {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--accent-color);
+            z-index: 3;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #f56565;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Header/Navbar -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-toilet text-2xl"></i>
+                <h1 class="text-xl font-bold">SCEA - PASEEA</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationBtn" class="p-2 rounded-full hover:bg-blue-700 transition">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <button id="userMenuBtn" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="hidden md:inline">Admin EG-CEA</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profil</a>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Paramètres</a>
+                        <div class="border-t border-gray-200"></div>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Déconnexion</a>
+                    </div>
+                </div>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-blue-700 transition">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 hidden md:block shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center space-x-2 mb-8">
+                    <i class="fas fa-toilet text-blue-500"></i>
+                    <span class="font-semibold text-lg">MENU PRINCIPAL</span>
+                </div>
+                <nav>
+                    <div class="mb-4">
+                        <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Tableau de bord</h3>
+                        <ul>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
+                                    <i class="fas fa-tachometer-alt w-5"></i>
+                                    <span>Tableau de bord</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des ménages</h3>
+                        <ul>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-users w-5"></i>
+                                    <span>Liste des ménages</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-user-plus w-5"></i>
+                                    <span>Enregistrer un ménage</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-search w-5"></i>
+                                    <span>Enquêtes</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des coupons</h3>
+                        <ul>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-ticket-alt w-5"></i>
+                                    <span>Créer des coupons</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-paper-plane w-5"></i>
+                                    <span>Distribuer des coupons</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-exchange-alt w-5"></i>
+                                    <span>Transferts de coupons</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Entreprises</h3>
+                        <ul>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-building w-5"></i>
+                                    <span>Entreprises accréditées</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-clipboard-check w-5"></i>
+                                    <span>Accréditation</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Suivi & Rapports</h3>
+                        <ul>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-chart-line w-5"></i>
+                                    <span>Statistiques</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <i class="fas fa-file-alt w-5"></i>
+                                    <span>Rapports</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Mobile sidebar -->
+        <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden">
+            <div class="sidebar w-64 h-full relative">
+                <button id="closeMobileSidebar" class="absolute top-4 right-4 text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="p-4 pt-12">
+                    <div class="flex items-center space-x-2 mb-8">
+                        <i class="fas fa-toilet text-blue-500"></i>
+                        <span class="font-semibold text-lg text-white">MENU PRINCIPAL</span>
+                    </div>
+                    <nav>
+                        <div class="mb-4">
+                            <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Tableau de bord</h3>
+                            <ul>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
+                                        <i class="fas fa-tachometer-alt w-5"></i>
+                                        <span>Tableau de bord</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des ménages</h3>
+                            <ul>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-users w-5"></i>
+                                        <span>Liste des ménages</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-user-plus w-5"></i>
+                                        <span>Enregistrer un ménage</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-search w-5"></i>
+                                        <span>Enquêtes</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des coupons</h3>
+                            <ul>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-ticket-alt w-5"></i>
+                                        <span>Créer des coupons</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-paper-plane w-5"></i>
+                                        <span>Distribuer des coupons</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-exchange-alt w-5"></i>
+                                        <span>Transferts de coupons</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Entreprises</h3>
+                            <ul>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-building w-5"></i>
+                                        <span>Entreprises accréditées</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-clipboard-check w-5"></i>
+                                        <span>Accréditation</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Suivi & Rapports</h3>
+                            <ul>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-chart-line w-5"></i>
+                                        <span>Statistiques</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-file-alt w-5"></i>
+                                        <span>Rapports</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="container mx-auto px-4 py-6">
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden mb-4 p-2 rounded-lg bg-blue-600 text-white">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Dashboard Header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Tableau de bord</h2>
+                        <p class="text-gray-500">Bienvenue dans le système de gestion des coupons électroniques pour l'assainissement</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>Créer un coupon</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="card rounded-lg p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Ménages éligibles</p>
+                                <h3 class="text-2xl font-bold">1,248</h3>
+                                <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> 12% ce mois</p>
+                            </div>
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Coupons distribués</p>
+                                <h3 class="text-2xl font-bold">876</h3>
+                                <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> 8% ce mois</p>
+                            </div>
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-ticket-alt text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Entreprises accréditées</p>
+                                <h3 class="text-2xl font-bold">32</h3>
+                                <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> 3% ce mois</p>
+                            </div>
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-building text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500">Latrines construites</p>
+                                <h3 class="text-2xl font-bold">642</h3>
+                                <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> 15% ce mois</p>
+                            </div>
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-toilet text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Recent Activities -->
+                    <div class="lg:col-span-2 card rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Activités récentes</h3>
+                            <button class="text-blue-600 hover:text-blue-800">Voir tout</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                                    <i class="fas fa-ticket-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Nouveau coupon distribué</p>
+                                    <p class="text-sm text-gray-500">Coupon #SCEA-7890 envoyé au ménage Traoré à Bobo-Dioulasso</p>
+                                    <p class="text-xs text-gray-400">Il y a 2 heures</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 rounded-full bg-green-100 text-green-600">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Latrine terminée</p>
+                                    <p class="text-sm text-gray-500">Construction terminée pour le ménage Ouédraogo à Ouagadougou par ABC Construction</p>
+                                    <p class="text-xs text-gray-400">Il y a 5 heures</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 rounded-full bg-purple-100 text-purple-600">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Nouvelle entreprise accréditée</p>
+                                    <p class="text-sm text-gray-500">XYZ Sanitation a été accréditée par le Bureau d'Assainissement</p>
+                                    <p class="text-xs text-gray-400">Il y a 1 jour</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Paiement effectué</p>
+                                    <p class="text-sm text-gray-500">Paiement de 250,000 FCFA transféré à DEF Construction via UPEP</p>
+                                    <p class="text-xs text-gray-400">Il y a 2 jours</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Progress -->
+                    <div class="card rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Progression du projet</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Ménages enregistrés</span>
+                                    <span>75%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Coupons distribués</span>
+                                    <span>60%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Latrines construites</span>
+                                    <span>45%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Paiements effectués</span>
+                                    <span>38%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 38%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <h4 class="font-medium mb-2">Prochaines étapes</h4>
+                            <ul class="space-y-2">
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-check-circle text-green-500"></i>
+                                    <span>Enquêtes terminées</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-check-circle text-green-500"></i>
+                                    <span>Accréditation des entreprises</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-arrow-right text-blue-500"></i>
+                                    <span>Distribution des coupons (en cours)</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-circle text-gray-300"></i>
+                                    <span>Construction des latrines</span>
+                                </li>
+                                <li class="flex items-center space-x-2">
+                                    <i class="fas fa-circle text-gray-300"></i>
+                                    <span>Paiements finaux</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flowchart and Recent Coupons -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Process Flowchart -->
+                    <div class="lg:col-span-2 card rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Processus de gestion des coupons</h3>
+                        <div class="flowchart">
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">1. Enquête et éligibilité</h4>
+                                        <p class="text-sm text-gray-500">Identification des ménages éligibles</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-down flowchart-arrow"></i>
+                            </div>
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-green-100 text-green-600">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">2. Contribution du ménage</h4>
+                                        <p class="text-sm text-gray-500">Paiement de la participation financière</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-down flowchart-arrow"></i>
+                            </div>
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-purple-100 text-purple-600">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">3. Distribution du coupon</h4>
+                                        <p class="text-sm text-gray-500">Envoi du coupon électronique par SMS</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-down flowchart-arrow"></i>
+                            </div>
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">4. Choix de l'entreprise</h4>
+                                        <p class="text-sm text-gray-500">Sélection d'une entreprise accréditée</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-down flowchart-arrow"></i>
+                            </div>
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-red-100 text-red-600">
+                                        <i class="fas fa-toilet"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">5. Construction</h4>
+                                        <p class="text-sm text-gray-500">Réalisation des travaux par l'entreprise</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-down flowchart-arrow"></i>
+                            </div>
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-indigo-100 text-indigo-600">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">6. Transfert du coupon</h4>
+                                        <p class="text-sm text-gray-500">Transfert du coupon à l'entreprise</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-arrow-down flowchart-arrow"></i>
+                            </div>
+                            <div class="flowchart-step">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 rounded-full bg-pink-100 text-pink-600">
+                                        <i class="fas fa-money-check-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">7. Paiement</h4>
+                                        <p class="text-sm text-gray-500">Rémunération de l'entreprise via UPEP</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Coupons -->
+                    <div class="card rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Coupons récents</h3>
+                            <button class="text-blue-600 hover:text-blue-800">Voir tout</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border-b pb-3">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-medium">#SCEA-7890</span>
+                                    <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Actif</span>
+                                </div>
+                                <p class="text-sm text-gray-500">Ménage Traoré - Bobo-Dioulasso</p>
+                                <p class="text-xs text-gray-400">Créé le 15/06/2023</p>
+                            </div>
+                            <div class="border-b pb-3">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-medium">#SCEA-7889</span>
+                                    <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">En attente</span>
+                                </div>
+                                <p class="text-sm text-gray-500">Ménage Ouédraogo - Ouagadougou</p>
+                                <p class="text-xs text-gray-400">Créé le 14/06/2023</p>
+                            </div>
+                            <div class="border-b pb-3">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-medium">#SCEA-7885</span>
+                                    <span class="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full">Utilisé</span>
+                                </div>
+                                <p class="text-sm text-gray-500">Ménage Kaboré - Koudougou</p>
+                                <p class="text-xs text-gray-400">Créé le 13/06/2023</p>
+                            </div>
+                            <div class="border-b pb-3">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-medium">#SCEA-7881</span>
+                                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">En construction</span>
+                                </div>
+                                <p class="text-sm text-gray-500">Ménage Sawadogo - Banfora</p>
+                                <p class="text-xs text-gray-400">Créé le 12/06/2023</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-medium">#SCEA-7878</span>
+                                    <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">Expiré</span>
+                                </div>
+                                <p class="text-sm text-gray-500">Ménage Zongo - Ouahigouya</p>
+                                <p class="text-xs text-gray-400">Créé le 10/06/2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-semibold">Notifications</h3>
+                <button id="closeNotificationModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="divide-y">
+                <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                    <div class="flex items-start space-x-3">
+                        <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Nouveau coupon à distribuer</p>
+                            <p class="text-sm text-gray-500">5 nouveaux coupons prêts pour distribution</p>
+                            <p class="text-xs text-gray-400">Il y a 30 minutes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                    <div class="flex items-start space-x-3">
+                        <div class="p-2 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Construction terminée</p>
+                            <p class="text-sm text-gray-500">Latrine terminée pour le ménage Ouédraogo</p>
+                            <p class="text-xs text-gray-400">Il y a 2 heures</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                    <div class="flex items-start space-x-3">
+                        <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Action requise</p>
+                            <p class="text-sm text-gray-500">3 coupons vont expirer dans 2 jours</p>
+                            <p class="text-xs text-gray-400">Il y a 5 heures</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t text-center">
+                <button class="text-blue-600 hover:text-blue-800">Marquer tout comme lu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') ||
+                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+        // Apply the saved theme
+        body.classList.add(savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcon('light');
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcon('dark');
+            }
+        });
+
+        function updateThemeIcon(theme) {
+            const icon = themeToggle.querySelector('i');
+            if (theme === 'dark') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // User menu toggle
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userMenu = document.getElementById('userMenu');
+
+        userMenuBtn.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Notification modal
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationModal = document.getElementById('notificationModal');
+        const closeNotificationModal = document.getElementById('closeNotificationModal');
+
+        notificationBtn.addEventListener('click', () => {
+            notificationModal.classList.remove('hidden');
+        });
+
+        closeNotificationModal.addEventListener('click', () => {
+            notificationModal.classList.add('hidden');
+        });
+
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const closeMobileSidebar = document.getElementById('closeMobileSidebar');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileSidebar.classList.remove('hidden');
+        });
+
+        closeMobileSidebar.addEventListener('click', () => {
+            mobileSidebar.classList.add('hidden');
+        });
+
+        // Close mobile sidebar when clicking outside
+        mobileSidebar.addEventListener('click', (e) => {
+            if (e.target === mobileSidebar) {
+                mobileSidebar.classList.add('hidden');
+            }
+        });
+
+        // Simulate loading data
+        document.addEventListener('DOMContentLoaded', () => {
+            // You would typically fetch data here in a real application
+            console.log('System ready for SCEA management');
+        });
+    </script>
+</body>
+</html>

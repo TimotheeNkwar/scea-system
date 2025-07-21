@@ -1,0 +1,314 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEA - Créer des coupons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dark { --bg-primary: #1a202c; --bg-secondary: #2d3748; --text-primary: #f7fafc; --text-secondary: #e2e8f0; --accent-color: #4fd1c5; --card-bg: #2d3748; }
+        .light { --bg-primary: #ffffff; --bg-secondary: #edf2f7; --text-primary: #2d3748; --text-secondary: #4a5568; --accent-color: #4299e1; --card-bg: #ffffff; }
+        body { background-color: var(--bg-primary); color: var(--text-primary); transition: all 0.3s ease; }
+        .card { background-color: var(--card-bg); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .sidebar { background-color: var(--bg-secondary); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background-color: #f56565; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .error { border-color: #f56565; }
+        .error-message { color: #f56565; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="light">
+    <!-- Header (same as households.html) -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2"><i class="fas fa-toilet text-2xl"></i><h1 class="text-xl font-bold">SCEA - PASEEA</h1></div>
+            <div class="flex items-center space-x-4">
+                <div class="relative"><button id="notificationBtn" class="p-2 rounded-full hover:bg-blue-700 transition"><i class="fas fa-bell"></i><span class="notification-badge">3</span></button></div>
+                <div class="relative"><button id="userMenuBtn" class="flex items-center space-x-2"><div class="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center"><i class="fas fa-user"></i></div><span class="hidden md:inline">Admin EG-CEA</span><i class="fas fa-chevron-down text-xs"></i></button><div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profil</a><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Paramètres</a><div class="border-t border-gray-200"></div><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Déconnexion</a></div></div>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-blue-700 transition"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar (same as households.html, with "Créer des coupons" highlighted) -->
+        <aside class="sidebar w-64 hidden md:block shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center space-x-2 mb-8"><i class="fas fa-toilet text-blue-500"></i><span class="font-semibold text-lg">MENU PRINCIPAL</span></div>
+                <nav>
+                    <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Tableau de bord</h3><ul><li><a href="index.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-tachometer-alt w-5"></i><span>Tableau de bord</span></a></li></ul></div>
+                    <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des ménages</h3><ul><li><a href="households.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-users w-5"></i><span>Liste des ménages</span></a></li><li><a href="register-household.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-user-plus w-5"></i><span>Enregistrer un ménage</span></a></li><li><a href="surveys.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-search w-5"></i><span>Enquêtes</span></a></li></ul></div>
+                    <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des coupons</h3><ul><li><a href="create-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700"><i class="fas fa-ticket-alt w-5"></i><span>Créer des coupons</span></a></li><li><a href="distribute-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-paper-plane w-5"></i><span>Distribuer des coupons</span></a></li><li><a href="transfer-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-exchange-alt w-5"></i><span>Transferts de coupons</span></a></li></ul></div>
+                    <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Entreprises</h3><ul><li><a href="accredited-companies.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-building w-5"></i><span>Entreprises accréditées</span></a></li><li><a href="accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-clipboard-check w-5"></i><span>Accréditation</span></a></li></ul></div>
+                    <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Suivi & Rapports</h3><ul><li><a href="statistics.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-chart-line w-5"></i><span>Statistiques</span></a></li><li><a href="reports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-file-alt w-5"></i><span>Rapports</span></a></li></ul></div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar (same as households.html) -->
+        <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden">
+            <div class="sidebar w-64 h-full relative">
+                <button id="closeMobileSidebar" class="absolute top-4 right-4 text-white"><i class="fas fa-times"></i></button>
+                <div class="p-4 pt-12">
+                    <div class="flex items-center space-x-2 mb-8"><i class="fas fa-toilet text-blue-500"></i><span class="font-semibold text-lg text-white">MENU PRINCIPAL</span></div>
+                    <nav>
+                        <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Tableau de bord</h3><ul><li><a href="index.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-tachometer-alt w-5"></i><span>Tableau de bord</span></a></li></ul></div>
+                        <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des ménages</h3><ul><li><a href="households.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-users w-5"></i><span>Liste des ménages</span></a></li><li><a href="register-household.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-user-plus w-5"></i><span>Enregistrer un ménage</span></a></li><li><a href="surveys.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-search w-5"></i><span>Enquêtes</span></a></li></ul></div>
+                        <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des coupons</h3><ul><li><a href="create-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700"><i class="fas fa-ticket-alt w-5"></i><span>Créer des coupons</span></a></li><li><a href="distribute-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-paper-plane w-5"></i><span>Distribuer des coupons</span></a></li><li><a href="transfer-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-exchange-alt w-5"></i><span>Transferts de coupons</span></a></li></ul></div>
+                        <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Entreprises</h3><ul><li><a href="accredited-companies.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-building w-5"></i><span>Entreprises accréditées</span></a></li><li><a href="accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-clipboard-check w-5"></i><span>Accréditation</span></a></li></ul></div>
+                        <div class="mb-4"><h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Suivi & Rapports</h3><ul><li><a href="statistics.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-chart-line w-5"></i><span>Statistiques</span></a></li><li><a href="reports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition"><i class="fas fa-file-alt w-5"></i><span>Rapports</span></a></li></ul></div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="container mx-auto px-4 py-6">
+                <button id="mobileMenuBtn" class="md:hidden mb-4 p-2 rounded-lg bg-blue-600 text-white"><i class="fas fa-bars"></i></button>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Créer des coupons</h2>
+                        <p class="text-gray-500">Générez de nouveaux coupons pour le programme</p>
+                    </div>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Nouveau coupon</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Type de coupon</label>
+                            <select id="couponType" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Sélectionner un type</option>
+                                <option value="latrine">Latrine</option>
+                                <option value="sanitation">Sanitation</option>
+                            </select>
+                            <p id="couponTypeError" class="error-message hidden">Ce champ est requis</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de coupons</label>
+                            <input type="number" id="couponCount" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" min="1" required>
+                            <p id="couponCountError" class="error-message hidden">Ce champ est requis</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date d'expiration</label>
+                            <input type="date" id="expiryDate" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                            <p id="expiryDateError" class="error-message hidden">Ce champ est requis</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Province</label>
+                            <select id="province" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Sélectionner une province</option>
+                                <option value="kadiogo">Kadiogo</option>
+                                <option value="houet">Haut-Bassins</option>
+                                <option value="kourweogo">Kourwéogo</option>
+                            </select>
+                            <p id="provinceError" class="error-message hidden">Ce champ est requis</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex space-x-4">
+                        <button id="submitCoupon" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                            <i class="fas fa-save"></i>
+                            <span>Créer</span>
+                        </button>
+                        <button id="resetForm" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg flex items-center space-x-2">
+                            <i class="fas fa-undo"></i>
+                            <span>Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Notification Modal (same as households.html) -->
+        <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-semibold">Notifications</h3>
+                    <button id="closeNotificationModal" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="divide-y">
+                    <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-full bg-blue-100 text-blue-600"><i class="fas fa-ticket-alt"></i></div>
+                            <div>
+                                <p class="font-medium">Nouveau coupon à distribuer</p>
+                                <p class="text-sm text-gray-500">5 nouveaux coupons prêts pour distribution</p>
+                                <p class="text-xs text-gray-400">Il y a 30 minutes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-full bg-green-100 text-green-600"><i class="fas fa-check-circle"></i></div>
+                            <div>
+                                <p class="font-medium">Construction terminée</p>
+                                <p class="text-sm text-gray-500">Latrine terminée pour le ménage Ouédraogo</p>
+                                <p class="text-xs text-gray-400">Il y a 2 heures</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t text-center">
+                    <button class="text-blue-600 hover:text-blue-800">Marquer tout comme lu</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Theme toggle, user menu, notification modal, and mobile menu (same as households.html)
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            body.classList.add(savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener('click', () => {
+                if (body.classList.contains('dark')) {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                } else {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                }
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector('i');
+                if (theme === 'dark') {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userMenu = document.getElementById('userMenu');
+            userMenuBtn.addEventListener('click', () => {
+                userMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationModal = document.getElementById('notificationModal');
+            const closeNotificationModal = document.getElementById('closeNotificationModal');
+            notificationBtn.addEventListener('click', () => {
+                notificationModal.classList.remove('hidden');
+            });
+            closeNotificationModal.addEventListener('click', () => {
+                notificationModal.classList.add('hidden');
+            });
+
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const closeMobileSidebar = document.getElementById('closeMobileSidebar');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileSidebar.classList.remove('hidden');
+            });
+            closeMobileSidebar.addEventListener('click', () => {
+                mobileSidebar.classList.add('hidden');
+            });
+            mobileSidebar.addEventListener('click', (e) => {
+                if (e.target === mobileSidebar) {
+                    mobileSidebar.classList.add('hidden');
+                }
+            });
+
+            // Form validation
+            const formInputs = {
+                couponType: document.getElementById('couponType'),
+                couponCount: document.getElementById('couponCount'),
+                expiryDate: document.getElementById('expiryDate'),
+                province: document.getElementById('province')
+            };
+
+            document.getElementById('submitCoupon').addEventListener('click', () => {
+                let isValid = true;
+                Object.keys(formInputs).forEach(key => {
+                    const input = formInputs[key];
+                    const error = document.getElementById(`${key}Error`);
+                    if (!input.value) {
+                        input.classList.add('error');
+                        error.classList.remove('hidden');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('error');
+                        error.classList.add('hidden');
+                    }
+                    if (key === 'couponCount' && input.value && input.value < 1) {
+                        input.classList.add('error');
+                        error.classList.remove('hidden');
+                        isValid = false;
+                    }
+                });
+
+                if (isValid) {
+                    console.log('Coupon created:', {
+                        couponType: formInputs.couponType.value,
+                        couponCount: formInputs.couponCount.value,
+                        expiryDate: formInputs.expiryDate.value,
+                        province: formInputs.province.value
+                    });
+                    alert('Coupons créés avec succès (simulation)');
+                }
+            });
+
+            document.getElementById('resetForm').addEventListener('click', () => {
+                Object.values(formInputs).forEach(input => {
+                    input.value = '';
+                    input.classList.remove('error');
+                    document.getElementById(`${input.id}Error`).classList.add('hidden');
+                });
+            });
+        </script>
+</body>
+</html>
