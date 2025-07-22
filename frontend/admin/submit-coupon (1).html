@@ -1,0 +1,205 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEA - Soumettre un Coupon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dark { --bg-primary: #1a202c; --bg-secondary: #2d3748; --text-primary: #f7fafc; --text-secondary: #e2e8f0; --accent-color: #4fd1c5; --card-bg: #2d3748; }
+        .light { --bg-primary: #ffffff; --bg-secondary: #edf2f7; --text-primary: #2d3748; --text-secondary: #4a5568; --accent-color: #4299e1; --card-bg: #ffffff; }
+        body { background-color: var(--bg-primary); color: var(--text-primary); transition: all 0.3s ease; }
+        .card { background-color: var(--card-bg); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="light">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-toilet text-2xl"></i>
+                <h1 class="text-xl font-bold">SCEA - PASEEA</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-blue-700 transition">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <span class="text-sm">Entreprise: [Nom Entreprise]</span>
+                <a href="logout" class="text-sm hover:underline">Déconnexion</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-6">Soumettre un Coupon</h2>
+
+            <!-- Coupon Submission Form -->
+            <form id="couponForm" class="space-y-4 mb-6">
+                <div>
+                    <label for="couponCode" class="block text-sm font-medium">Code du Coupon</label>
+                    <input type="text" id="couponCode" name="couponCode" required class="mt-1 block w-full p-2 border rounded-lg focus:ring focus:ring-blue-300" placeholder="Entrez le code du coupon">
+                </div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Soumettre</button>
+            </form>
+
+            <!-- Details Section with Tabs -->
+            <div id="detailsSection" class="hidden">
+                <div class="flex border-b mb-4">
+                    <button class="tab-link px-4 py-2 font-medium focus:outline-none" data-tab="details">Détails du Travail</button>
+                </div>
+                <div id="detailsContent" class="tab-content active">
+                    <div class="space-y-4">
+                        <p><strong>Date du Travail:</strong> <span id="workDate"></span></p>
+                        <p><strong>Type d'Aménagement:</strong> <span id="workType"></span> (Latrine ou Assainissement)</p>
+                        <p><strong>Adresse:</strong> <span id="address"></span></p>
+                        <p><strong>Province:</strong> <span id="province"></span></p>
+                        <p><strong>Nom du Propriétaire:</strong> <span id="ownerName"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submitted Coupons List -->
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-4">Coupons Soumis</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 dark:bg-gray-700">
+                                <th class="border p-2">Code du Coupon</th>
+                                <th class="border p-2">Date de Soumission</th>
+                                <th class="border p-2">Type de Travail</th>
+                                <th class="border p-2">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submittedCouponsTable">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            document.body.classList.toggle('dark');
+            const icon = document.getElementById('themeToggle').querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+
+        // Coupon submission
+        document.getElementById('couponForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const couponCode = document.getElementById('couponCode').value;
+            const response = await fetch('/api/coupons/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token') // Assume token-based auth
+                },
+                body: JSON.stringify({ couponCode }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('detailsSection').classList.remove('hidden');
+                document.getElementById('workDate').textContent = data.workDate || 'Non spécifié';
+                document.getElementById('workType').textContent = data.workType || 'Non spécifié';
+                document.getElementById('address').textContent = data.address || 'Non spécifié';
+                document.getElementById('province').textContent = data.province || 'Non spécifié';
+                document.getElementById('ownerName').textContent = data.ownerName || 'Non spécifié';
+                loadSubmittedCoupons(); // Refresh the list
+                alert('Coupon soumis avec succès !');
+            } else {
+                alert('Erreur : ' + data.message);
+            }
+        });
+
+        // Load submitted coupons
+        async function loadSubmittedCoupons() {
+            const response = await fetch('/api/coupons/submitted', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+            });
+            const data = await response.json();
+            const tableBody = document.getElementById('submittedCouponsTable');
+            tableBody.innerHTML = '';
+            if (response.ok && data.length > 0) {
+                data.forEach(coupon => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="border p-2">${coupon.code}</td>
+                        <td class="border p-2">${coupon.submittedAt || 'Non spécifié'}</td>
+                        <td class="border p-2">${coupon.workType || 'Non spécifié'}</td>
+                        <td class="border p-2">${coupon.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="4" class="border p-2 text-center">Aucun coupon soumis</td></tr>';
+            }
+        }
+
+        // Load coupons on page load
+        window.addEventListener('load', loadSubmittedCoupons);
+
+        // Tab functionality
+        document.querySelectorAll('.tab-link').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('border-b-2', 'border-blue-600'));
+                button.classList.add('border-b-2', 'border-blue-600');
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(button.dataset.tab + 'Content').classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
