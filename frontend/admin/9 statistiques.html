@@ -1,12 +1,11 @@
 <script type="text/javascript">
-
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+        return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
         if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
             try {
                 var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
@@ -20,11 +19,11 @@
 
                 // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
                 var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                    row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
                 );
                 // Fallback
                 if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
+                    headerRowIndex = 0;
                 }
 
                 // Convert filtered JSON back to CSV
@@ -37,29 +36,79 @@
             }
         }
         return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+    }
+</script>
+<!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCEA - Statistiques</title>
-    <canvas id="couponsParProvinceChart"></canvas>
-    <canvas id="statutLatrinesChart"></canvas>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .dark { --bg-primary: #1a202c; --bg-secondary: #2d3748; --text-primary: #f7fafc; --text-secondary: #e2e8f0; --accent-color: #4fd1c5; --card-bg: #2d3748; }
-        .light { --bg-primary: #ffffff; --bg-secondary: #edf2f7; --text-primary: #2d3748; --text-secondary: #4a5568; --accent-color: #4299e1; --card-bg: #ffffff; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); transition: all 0.3s ease; }
-        .card { background-color: var(--card-bg); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .sidebar { background-color: var(--bg-secondary); }
-        .notification-badge { position: absolute; top: -5px; right: -5px; background-color: #f56565; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .dark {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --accent-color: #4fd1c5;
+            --card-bg: #2d3748;
+        }
+
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #edf2f7;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --accent-color: #4299e1;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            background-color: var(--bg-secondary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #f56565;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .error {
+            border-color: #f56565;
+        }
+
+        .error-message {
+            color: #f56565;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
+
 <body class="light">
-    <!-- Header -->
+    <!-- Header (same as statistics.html) -->
     <header class="bg-blue-600 text-white shadow-md">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
@@ -81,7 +130,8 @@
                         <span class="hidden md:inline">Admin EG-CEA</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
-                    <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <div id="userMenu"
+                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                         <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profil</a>
                         <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Paramètres</a>
                         <div class="border-t border-gray-200"></div>
@@ -96,7 +146,7 @@
     </header>
 
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
+        <!-- Sidebar (same as statistics.html, with "Rapports" highlighted) -->
         <aside class="sidebar w-64 hidden md:block shadow-lg">
             <div class="p-4">
                 <div class="flex items-center space-x-2 mb-8">
@@ -108,7 +158,8 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Tableau de bord</h3>
                         <ul>
                             <li>
-                                <a href="0 tableau de bord.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="0 tableau de bord.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-tachometer-alt w-5"></i>
                                     <span>Tableau de bord</span>
                                 </a>
@@ -119,19 +170,22 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des ménages</h3>
                         <ul>
                             <li>
-                                <a href="1 liste des menages.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="1 liste des menages.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-users w-5"></i>
                                     <span>Liste des ménages</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="2 enregistrer un menage.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="2 enregistrer un menage.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-user-plus w-5"></i>
                                     <span>Enregistrer un ménage</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="3 enquetes.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="3 enquetes.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-search w-5"></i>
                                     <span>Enquêtes</span>
                                 </a>
@@ -142,19 +196,22 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des coupons</h3>
                         <ul>
                             <li>
-                                <a href="4 creer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="4 creer des coupons.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-ticket-alt w-5"></i>
                                     <span>Créer des coupons</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="5 distribuer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="5 distribuer des coupons.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-paper-plane w-5"></i>
                                     <span>Distribuer des coupons</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="6 transferts des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="6 transferts des coupons.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-exchange-alt w-5"></i>
                                     <span>Transferts de coupons</span>
                                 </a>
@@ -165,13 +222,15 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Entreprises</h3>
                         <ul>
                             <li>
-                                <a href="7 entreprises accreditees.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="7 entreprises accreditees.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-building w-5"></i>
                                     <span>Entreprises accréditées</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="8 accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="8 accreditation.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-clipboard-check w-5"></i>
                                     <span>Accréditation</span>
                                 </a>
@@ -182,13 +241,15 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Suivi & Rapports</h3>
                         <ul>
                             <li>
-                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
+                                <a href="#"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
                                     <i class="fas fa-chart-line w-5"></i>
                                     <span>Statistiques</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="10 rapports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="10 rapports.html"
+                                    class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-file-alt w-5"></i>
                                     <span>Rapports</span>
                                 </a>
@@ -199,7 +260,7 @@
             </div>
         </aside>
 
-        <!-- Mobile Sidebar -->
+        <!-- Mobile Sidebar (same as statistics.html, with "Rapports" highlighted) -->
         <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden">
             <div class="sidebar w-64 h-full relative">
                 <button id="closeMobileSidebar" class="absolute top-4 right-4 text-white">
@@ -215,7 +276,8 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Tableau de bord</h3>
                             <ul>
                                 <li>
-                                    <a href="0 tableau de bord.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="0 tableau de bord.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-tachometer-alt w-5"></i>
                                         <span>Tableau de bord</span>
                                     </a>
@@ -226,19 +288,22 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des ménages</h3>
                             <ul>
                                 <li>
-                                    <a href="1 liste des menages.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="1 liste des menages.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-users w-5"></i>
                                         <span>Liste des ménages</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="2 enregistrer un menage.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="2 enregistrer un menage.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-user-plus w-5"></i>
                                         <span>Enregistrer un ménage</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="3 enquetes.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="3 enquetes.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-search w-5"></i>
                                         <span>Enquêtes</span>
                                     </a>
@@ -249,19 +314,22 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des coupons</h3>
                             <ul>
                                 <li>
-                                    <a href="4 creer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="4 creer des coupons.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-ticket-alt w-5"></i>
                                         <span>Créer des coupons</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="5 distribuer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="5 distribuer des coupons.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-paper-plane w-5"></i>
                                         <span>Distribuer des coupons</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="6 transferts des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="6 transferts des coupons.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-exchange-alt w-5"></i>
                                         <span>Transferts de coupons</span>
                                     </a>
@@ -272,13 +340,15 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Entreprises</h3>
                             <ul>
                                 <li>
-                                    <a href="7 entreprises accreditees.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="7 entreprises accreditees.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-building w-5"></i>
                                         <span>Entreprises accréditées</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="8 accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="8 accreditation.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-clipboard-check w-5"></i>
                                         <span>Accréditation</span>
                                     </a>
@@ -289,13 +359,15 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Suivi & Rapports</h3>
                             <ul>
                                 <li>
-                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
+                                    <a href="#"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
                                         <i class="fas fa-chart-line w-5"></i>
                                         <span>Statistiques</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="10 rapports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="10 rapports.html"
+                                        class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-file-alt w-5"></i>
                                         <span>Rapports</span>
                                     </a>
@@ -394,8 +466,9 @@
             </div>
         </main>
 
-        <!-- Notification Modal -->
-        <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <!-- Notification Modal (same as statistics.html) -->
+        <div id="notificationModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
             <div class="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
                 <div class="p-4 border-b flex justify-between items-center">
                     <h3 class="text-lg font-semibold">Notifications</h3>
@@ -407,11 +480,11 @@
                     <div class="p-4 hover:bg-gray-50 cursor-pointer">
                         <div class="flex items-start space-x-3">
                             <div class="p-2 rounded-full bg-blue-100 text-blue-600">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-file-alt"></i>
                             </div>
                             <div>
-                                <p class="font-medium">Nouvelles statistiques disponibles</p>
-                                <p class="text-sm text-gray-500">Mise à jour des données pour Juillet 2025</p>
+                                <p class="font-medium">Nouveau rapport généré</p>
+                                <p class="text-sm text-gray-500">Rapport Distribution Juillet 2025 disponible</p>
                                 <p class="text-xs text-gray-400">Il y a 1 heure</p>
                             </div>
                         </div>
@@ -424,7 +497,7 @@
         </div>
 
         <script>
-            // Theme toggle, user menu, notification modal, and mobile menu
+            // Theme toggle, user menu, notification modal, and mobile menu (same as statistics.html)
             const themeToggle = document.getElementById('themeToggle');
             const body = document.body;
             const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -492,6 +565,47 @@
                     mobileSidebar.classList.add('hidden');
                 }
             });
+
+            // Form validation
+            const formInputs = {
+                reportType: document.getElementById('reportType'),
+                reportPeriod: document.getElementById('reportPeriod')
+            };
+
+            document.getElementById('generateReport').addEventListener('click', () => {
+                let isValid = true;
+                Object.keys(formInputs).forEach(key => {
+                    const input = formInputs[key];
+                    const error = document.getElementById(`${key}Error`);
+                    if (!input.value) {
+                        input.classList.add('error');
+                        error.classList.remove('hidden');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('error');
+                        error.classList.add('hidden');
+                    }
+                });
+
+                if (isValid) {
+                    console.log('Report generated:', {
+                        reportType: formInputs.reportType.value,
+                        reportPeriod: formInputs.reportPeriod.value,
+                        reportProvince: document.getElementById('reportProvince').value
+                    });
+                    alert('Rapport généré avec succès (simulation)');
+                }
+            });
+
+            document.getElementById('resetFilters').addEventListener('click', () => {
+                Object.values(formInputs).forEach(input => {
+                    input.value = '';
+                    input.classList.remove('error');
+                    document.getElementById(`${input.id}Error`).classList.add('hidden');
+                });
+                document.getElementById('reportProvince').value = '';
+            });
         </script>
 </body>
+
 </html>
