@@ -42,7 +42,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCEA - Liste des ménages</title>
+    <title>SCEA - Enregistrer un ménage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -87,6 +87,13 @@
             align-items: center;
             justify-content: center;
             font-size: 12px;
+        }
+        .error {
+            border-color: #f56565;
+        }
+        .error-message {
+            color: #f56565;
+            font-size: 0.875rem;
         }
     </style>
 </head>
@@ -140,7 +147,7 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Tableau de bord</h3>
                         <ul>
                             <li>
-                                <a href="index.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="0 tableau de bord.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-tachometer-alt w-5"></i>
                                     <span>Tableau de bord</span>
                                 </a>
@@ -151,19 +158,19 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des ménages</h3>
                         <ul>
                             <li>
-                                <a href="households.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
+                                <a href="1 liste des menages.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-users w-5"></i>
                                     <span>Liste des ménages</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="register-household.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
                                     <i class="fas fa-user-plus w-5"></i>
                                     <span>Enregistrer un ménage</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="surveys.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="3 enquetes.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-search w-5"></i>
                                     <span>Enquêtes</span>
                                 </a>
@@ -174,19 +181,19 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Gestion des coupons</h3>
                         <ul>
                             <li>
-                                <a href="create-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="4 creer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-ticket-alt w-5"></i>
                                     <span>Créer des coupons</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="distribute-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="5 distribuer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-paper-plane w-5"></i>
                                     <span>Distribuer des coupons</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="transfer-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="6 transferts des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-exchange-alt w-5"></i>
                                     <span>Transferts de coupons</span>
                                 </a>
@@ -197,13 +204,13 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Entreprises</h3>
                         <ul>
                             <li>
-                                <a href="accredited-companies.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="7 entreprises accreditees.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-building w-5"></i>
                                     <span>Entreprises accréditées</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="8 accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-clipboard-check w-5"></i>
                                     <span>Accréditation</span>
                                 </a>
@@ -214,13 +221,13 @@
                         <h3 class="text-xs uppercase font-semibold text-gray-500 mb-2">Suivi & Rapports</h3>
                         <ul>
                             <li>
-                                <a href="statistics.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="9 statistiques.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-chart-line w-5"></i>
                                     <span>Statistiques</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="reports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                <a href="10 rapports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                     <i class="fas fa-file-alt w-5"></i>
                                     <span>Rapports</span>
                                 </a>
@@ -247,7 +254,7 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Tableau de bord</h3>
                             <ul>
                                 <li>
-                                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="0 tableau de bord.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-tachometer-alt w-5"></i>
                                         <span>Tableau de bord</span>
                                     </a>
@@ -258,19 +265,19 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des ménages</h3>
                             <ul>
                                 <li>
-                                    <a href="households.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
+                                    <a href="1 liste des menages.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-users w-5"></i>
                                         <span>Liste des ménages</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="register-household.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="#" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
                                         <i class="fas fa-user-plus w-5"></i>
                                         <span>Enregistrer un ménage</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="surveys.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="3 enquetes.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-search w-5"></i>
                                         <span>Enquêtes</span>
                                     </a>
@@ -281,19 +288,19 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Gestion des coupons</h3>
                             <ul>
                                 <li>
-                                    <a href="create-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="4 creer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-ticket-alt w-5"></i>
                                         <span>Créer des coupons</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="distribute-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="5 distribuer des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-paper-plane w-5"></i>
                                         <span>Distribuer des coupons</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="transfer-coupon.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="6 transferts des coupons.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-exchange-alt w-5"></i>
                                         <span>Transferts de coupons</span>
                                     </a>
@@ -304,13 +311,13 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Entreprises</h3>
                             <ul>
                                 <li>
-                                    <a href="accredited-companies.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="7 entreprises accreditees.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-building w-5"></i>
                                         <span>Entreprises accréditées</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="8 accreditation.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-clipboard-check w-5"></i>
                                         <span>Accréditation</span>
                                     </a>
@@ -321,13 +328,13 @@
                             <h3 class="text-xs uppercase font-semibold text-gray-400 mb-2">Suivi & Rapports</h3>
                             <ul>
                                 <li>
-                                    <a href="statistics.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="9 statistiques.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-chart-line w-5"></i>
                                         <span>Statistiques</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="reports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
+                                    <a href="10 rapports.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition">
                                         <i class="fas fa-file-alt w-5"></i>
                                         <span>Rapports</span>
                                     </a>
@@ -350,109 +357,64 @@
                 <!-- Page Header -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                     <div>
-                        <h2 class="text-2xl font-bold">Liste des ménages</h2>
-                        <p class="text-gray-500">Gérez et consultez les informations des ménages inscrits</p>
+                        <h2 class="text-2xl font-bold">Enregistrer un ménage</h2>
+                        <p class="text-gray-500">Ajoutez un nouveau ménage au système</p>
                     </div>
                 </div>
 
-                <!-- Filters -->
-                <div class="card rounded-lg p-6 mb-6">
-                    <h3 class="text-lg font-semibold mb-4">Filtres</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Form -->
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Nouveau ménage</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nom du ménage</label>
+                            <input type="text" id="householdName" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                            <p id="householdNameError" class="error-message hidden">Ce champ est requis</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                            <input type="tel" id="phone" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" pattern="[0-9]{10}" required>
+                            <p id="phoneError" class="error-message hidden">Numéro de téléphone invalide</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+                            <input type="text" id="address" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                            <p id="addressError" class="error-message hidden">Ce champ est requis</p>
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Province</label>
-                            <select id="provinceFilter" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Toutes les provinces</option>
+                            <select id="province" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Sélectionner une province</option>
                                 <option value="kadiogo">Kadiogo</option>
                                 <option value="houet">Haut-Bassins</option>
                                 <option value="kourweogo">Kourwéogo</option>
                             </select>
+                            <p id="provinceError" class="error-message hidden">Ce champ est requis</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Statut du coupon</label>
-                            <select id="couponStatusFilter" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Tous les statuts</option>
-                                <option value="actif">Actif</option>
-                                <option value="en-attente">En attente</option>
-                                <option value="utilise">Utilisé</option>
-                                <option value="expire">Expiré</option>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Statut d'éligibilité</label>
+                            <select id="eligibility" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Sélectionner un statut</option>
+                                <option value="eligible">Éligible</option>
+                                <option value="non-eligible">Non éligible</option>
                             </select>
+                            <p id="eligibilityError" class="error-message hidden">Ce champ est requis</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Statut des latrines</label>
-                            <select id="latrineStatusFilter" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Tous les statuts</option>
-                                <option value="non-construit">Non construit</option>
-                                <option value="en-construction">En construction</option>
-                                <option value="termine">Terminé</option>
-                            </select>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de membres</label>
+                            <input type="number" id="members" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" min="1" required>
+                            <p id="membersError" class="error-message hidden">Ce champ est requis</p>
                         </div>
                     </div>
-                    <button id="applyFilters" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
-                        <i class="fas fa-filter"></i>
-                        <span>Appliquer les filtres</span>
-                    </button>
-                </div>
-
-                <!-- Households Table -->
-                <div class="card rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4">Ménages inscrits</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full table-auto">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="px-4 py-2 text-left">Nom du ménage</th>
-                                    <th class="px-4 py-2 text-left">Localisation</th>
-                                    <th class="px-4 py-2 text-left">Statut du coupon</th>
-                                    <th class="px-4 py-2 text-left">Statut des latrines</th>
-                                    <th class="px-4 py-2 text-left">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="householdTableBody">
-                                <tr class="border-b">
-                                    <td class="px-4 py-2">Ménage Traoré</td>
-                                    <td class="px-4 py-2">Bobo-Dioulasso</td>
-                                    <td class="px-4 py-2">
-                                        <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Actif</span>
-                                    </td>
-                                    <td class="px-4 py-2">En construction</td>
-                                    <td class="px-4 py-2">
-                                        <button class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 view-details" data-id="1">
-                                            <i class="fas fa-eye"></i>
-                                            <span>Voir Détails</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="px-4 py-2">Ménage Ouédraogo</td>
-                                    <td class="px-4 py-2">Ouagadougou</td>
-                                    <td class="px-4 py-2">
-                                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">En attente</span>
-                                    </td>
-                                    <td class="px-4 py-2">Non construit</td>
-                                    <td class="px-4 py-2">
-                                        <button class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 view-details" data-id="2">
-                                            <i class="fas fa-eye"></i>
-                                            <span>Voir Détails</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="px-4 py-2">Ménage Kaboré</td>
-                                    <td class="px-4 py-2">Koudougou</td>
-                                    <td class="px-4 py-2">
-                                        <span class="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full">Utilisé</span>
-                                    </td>
-                                    <td class="px-4 py-2">Terminé</td>
-                                    <td class="px-4 py-2">
-                                        <button class="text-blue-600 hover:text-blue-800 flex items-center space-x-1 view-details" data-id="3">
-                                            <i class="fas fa-eye"></i>
-                                            <span>Voir Détails</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="mt-6 flex space-x-4">
+                        <button id="submitHousehold" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                            <i class="fas fa-save"></i>
+                            <span>Enregistrer</span>
+                        </button>
+                        <button id="resetForm" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg flex items-center space-x-2">
+                            <i class="fas fa-undo"></i>
+                            <span>Réinitialiser</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -572,21 +534,54 @@
                 }
             });
 
-            // Filter functionality (simulated)
-            document.getElementById('applyFilters').addEventListener('click', () => {
-                const province = document.getElementById('provinceFilter').value;
-                const couponStatus = document.getElementById('couponStatusFilter').value;
-                const latrineStatus = document.getElementById('latrineStatusFilter').value;
-                console.log('Filtering with:', { province, couponStatus, latrineStatus });
-                // In a real app, filter table data here
-                alert('Filtres appliqués (simulation)');
+            // Form validation
+            const formInputs = {
+                householdName: document.getElementById('householdName'),
+                phone: document.getElementById('phone'),
+                address: document.getElementById('address'),
+                province: document.getElementById('province'),
+                eligibility: document.getElementById('eligibility'),
+                members: document.getElementById('members')
+            };
+
+            document.getElementById('submitHousehold').addEventListener('click', () => {
+                let isValid = true;
+                Object.keys(formInputs).forEach(key => {
+                    const input = formInputs[key];
+                    const error = document.getElementById(`${key}Error`);
+                    if (!input.value) {
+                        input.classList.add('error');
+                        error.classList.remove('hidden');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('error');
+                        error.classList.add('hidden');
+                    }
+                    if (key === 'phone' && input.value && !/^[0-9]{10}$/.test(input.value)) {
+                        input.classList.add('error');
+                        error.classList.remove('hidden');
+                        isValid = false;
+                    }
+                });
+
+                if (isValid) {
+                    console.log('Form submitted:', {
+                        householdName: formInputs.householdName.value,
+                        phone: formInputs.phone.value,
+                        address: formInputs.address.value,
+                        province: formInputs.province.value,
+                        eligibility: formInputs.eligibility.value,
+                        members: formInputs.members.value
+                    });
+                    alert('Ménage enregistré avec succès (simulation)');
+                }
             });
 
-            // View details (simulated)
-            document.querySelectorAll('.view-details').forEach(button => {
-                button.addEventListener('click', () => {
-                    const id = button.getAttribute('data-id');
-                    alert(`Affichage des détails pour le ménage ID: ${id} (simulation)`);
+            document.getElementById('resetForm').addEventListener('click', () => {
+                Object.values(formInputs).forEach(input => {
+                    input.value = '';
+                    input.classList.remove('error');
+                    document.getElementById(`${input.id}Error`).classList.add('hidden');
                 });
             });
         </script>
