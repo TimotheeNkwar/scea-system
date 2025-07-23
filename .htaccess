@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /scea-paseea/
+
+# Route API requests to api.php
+RewriteCond %{REQUEST_URI} ^/api/(.*)$
+RewriteRule ^api/(.*)$ api/api.php [L]
+
+# Serve HTML files from views
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
