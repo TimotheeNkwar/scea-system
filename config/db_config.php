@@ -1,8 +1,8 @@
 <?php
 $db_config = [
     'host' => 'localhost',
-    'dbname' => 'scea_paseea',
+    'dbname' => 'scea_db',
     'username' => 'root',
-    'password' => ''
+    'password' => '22205731'
 ];
 ?>
