@@ -1,0 +1,120 @@
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEA - Connexion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dark {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --accent-color: #4fd1c5;
+            --card-bg: #2d3748;
+        }
+
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #edf2f7;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --accent-color: #4299e1;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="light">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-toilet text-2xl"></i>
+                <h1 class="text-xl font-bold">SCEA - PASEEA</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-blue-700 transition">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex items-center justify-center min-h-screen">
+        <div class="card p-6 w-full max-w-md">
+            <h2 class="text-2xl font-bold text-center mb-6">Connexion</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium">Nom d'utilisateur ou Email</label>
+                    <input type="text" id="username" name="username" required
+                        class="mt-1 block w-full p-2 border rounded-lg focus:ring focus:ring-blue-300"
+                        placeholder="Entrez votre nom d'utilisateur ou email">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium">Mot de passe</label>
+                    <input type="password" id="password" name="password" required
+                        class="mt-1 block w-full p-2 border rounded-lg focus:ring focus:ring-blue-300"
+                        placeholder="Entrez votre mot de passe">
+                </div>
+                <div class="flex items-center justify-between">
+                    <a href="../change-password" class="text-sm text-blue-600 hover:underline">Mot de passe oublié
+                        ?</a>
+                    <button type="submit"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Se
+                        connecter</button>
+                </div>
+            </form>
+            <p class="mt-4 text-center text-sm">Pas encore inscrit ? <a href="#"
+                    class="text-blue-600 hover:underline">Créer un compte</a></p>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            document.body.classList.toggle('dark');
+            const icon = document.getElementById('themeToggle').querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert('Connexion réussie ! Redirection...');
+                // Redirect to dashboard (e.g., 0 tableau de bord.html)
+                window.location.href = '0 tableau de bord.html';
+            } else {
+                alert('Erreur : ' + data.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

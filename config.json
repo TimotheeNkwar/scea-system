@@ -1,0 +1,10 @@
+{
+    "statut": "active",
+    "page": null,
+    "get": [{
+        "_class_": "kaneki-ken",
+        "_dev_": "wataba-dev",
+        "_speech_": "div_class_equal_a_kaneki_ken",
+        "_codec_": "2110-3110-3120-10-3130-2110"
+    }]
+}

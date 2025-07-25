@@ -1,0 +1,128 @@
+{
+    "1": [
+        {
+            "name": "Modèle 1",
+            "features": [
+                {
+                    "name": "Dalle",
+                    "price": 40,
+                    "desciption": null
+                },
+                {
+                    "name": "Structure",
+                    "price": 60,
+                    "desciption": null
+                },
+                {
+                    "name": "Toiture",
+                    "price": 30,
+                    "desciption": null
+                },
+                {
+                    "name": "Porte",
+                    "price": 12,
+                    "desciption": null
+                },
+                {
+                    "name": "Trou",
+                    "price": 15,
+                    "desciption": null
+                }
+            ],
+            "devise": "USD"
+        },
+        {
+            "name": "Modèle 2",
+            "features": [
+                {
+                    "name": "Dalle",
+                    "price": 70,
+                    "desciption": null
+                },
+                {
+                    "name": "Structure",
+                    "price": 60,
+                    "desciption": null
+                },
+                {
+                    "name": "Toiture",
+                    "price": 30,
+                    "desciption": null
+                },
+                {
+                    "name": "Porte",
+                    "price": 12,
+                    "desciption": null
+                },
+                {
+                    "name": "Trou",
+                    "price": 15,
+                    "desciption": null
+                }
+            ],
+            "devise": "USD"
+        },
+        {
+            "name": "Modèle 3",
+            "features": [
+                {
+                    "name": "Dalle",
+                    "price": 40,
+                    "desciption": null
+                },
+                {
+                    "name": "Structure",
+                    "price": 160,
+                    "desciption": null
+                },
+                {
+                    "name": "Toiture",
+                    "price": 30,
+                    "desciption": null
+                },
+                {
+                    "name": "Porte",
+                    "price": 12,
+                    "desciption": null
+                },
+                {
+                    "name": "Trou",
+                    "price": 15,
+                    "desciption": null
+                }
+            ],
+            "devise": "USD"
+        },
+        {
+            "name": "Modèle 4",
+            "features": [
+                {
+                    "name": "Dalle",
+                    "price": 70,
+                    "desciption": null
+                },
+                {
+                    "name": "Structure",
+                    "price": 160,
+                    "desciption": null
+                },
+                {
+                    "name": "Toiture",
+                    "price": 30,
+                    "desciption": null
+                },
+                {
+                    "name": "Porte",
+                    "price": 12,
+                    "desciption": null
+                },
+                {
+                    "name": "Trou",
+                    "price": 15,
+                    "desciption": null
+                }
+            ],
+            "devise": "USD"
+        }
+    ]
+}
