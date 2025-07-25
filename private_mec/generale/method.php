@@ -71,6 +71,28 @@ function monthDayToDate($string, $end=3){
     $exp = $startDate->format("Y-m-d H:i:s");
     return [$start, $exp];
 }
+function dateToMonthDay($date) {
+    try {
+        $dt = new DateTime($date);
+        $month = $dt->format('m');
+        $day = $dt->format('d');
+        return "$month$day";
+    } catch (Exception $e) {
+        return "0000";
+    }
+}
+
+function dateToHourMinute($date) {
+    try {
+        $dt = new DateTime($date);
+        $hour = $dt->format('H');
+        $min = $dt->format('i');
+        return "$hour$min";
+    } catch (Exception $e) {
+        return "0000";
+    }
+}
+
 
 function format_name($string) {
     $list = explode(" ", $string);

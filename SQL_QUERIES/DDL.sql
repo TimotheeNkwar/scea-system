@@ -40,11 +40,12 @@ CREATE TABLE IF NOT EXISTS persons(
     birthdate DATE,
     birthplace VARCHAR(30),
     gender INT DEFAULT 1,
-    email VARCHAR(40),
+    email VARCHAR(40) UNIQUE,
     phone_number_1 BIGINT,
     phone_number_2 BIGINT,
     role_id VARCHAR(5),
     enlisment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    temp_id VARCHAR(200) UNIQUE,
     statut INT DEFAULT 1,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (role_id) REFERENCES roles(role_id)
@@ -61,6 +62,7 @@ CREATE TABLE IF NOT EXISTS coupons(
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     city_id VARCHAR(10) DEFAULT NULL,
     enlisment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    temp_id VARCHAR(200) UNIQUE,
     statut INT DEFAULT 2,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (person_id) REFERENCES persons(person_id),
@@ -109,6 +111,7 @@ CREATE TABLE IF NOT EXISTS households(
     household_motivation TEXT,
     comment TEXT,
     enlistement_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    temp_id VARCHAR(200) UNIQUE,
     statut INT DEFAULT 0,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (person_id) REFERENCES persons(person_id),
@@ -148,6 +151,7 @@ CREATE TABLE IF NOT EXISTS companies(
     info TEXT,
     enrolement_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     agent_id VARCHAR(40),
+    temp_id VARCHAR(200) UNIQUE,
     statut INT DEFAULT 1,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (city_id) REFERENCES cities(city_id),
@@ -160,10 +164,12 @@ CREATE TABLE IF NOT EXISTS employees(
     address VARCHAR(200),
     etat_civil INT DEFAULT 1,
     admin_id VARCHAR(40),
+    province_id VARCHAR(20) NOT NULL,
     statut INT DEFAULT 1,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (person_id) REFERENCES persons(person_id),
-    FOREIGN KEY (admin_id) REFERENCES persons(person_id)
+    FOREIGN KEY (admin_id) REFERENCES persons(person_id),
+    FOREIGN KEY (province_id) REFERENCES provinces(province_id)
 );
 
 CREATE TABLE IF NOT EXISTS survey(
@@ -189,6 +195,7 @@ CREATE TABLE IF NOT EXISTS coupon_transfert(
     coupon_id VARCHAR(50),
     transfert_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reason TEXT,
+    temp_id VARCHAR(200) UNIQUE,
     statut INT DEFAULT 1,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (from_household_id) REFERENCES households(household_id),
@@ -209,6 +216,7 @@ CREATE TABLE IF NOT EXISTS reports(
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     comments TEXT,
     download INT DEFAULT 0,
+    temp_id VARCHAR(200) UNIQUE,
     statut INT DEFAULT 1,
     visible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (person_id) REFERENCES persons(person_id)

@@ -31,8 +31,23 @@ try{
                         include("../private_mec/generale/method.php");
                         include("../private_mec/admin/register_admin.php");
                         $GLOBALS["data"] = array(
-                            
+                            "fname"=>"NGOY",
+                            "sname"=>"kitenge",
+                            "tname"=>"cled",
+                            "birthdate"=>"2004-07-19",
+                            "birthplace"=>"kimpese",
+                            "gender"=> 1,
+                            "email"=>"cledngoy@gmail.com",
+                            "phone1"=>905338740912,
+                            "phone2"=>null,
+                            "address"=>"Yapim 43 door 6",
+                            "etat_civil"=>1,
+                            "province_id"=>"HK"
                         );
+                        $reg = register_admin();
+                        
+                        echo $reg;
+                        exit;
                     }
             }
         }
