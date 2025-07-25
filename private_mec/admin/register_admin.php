@@ -23,20 +23,50 @@ function register_admin(){
         }
         $email = secure_name($GLOBALS["data"]["email"]);
         if(!verify_email($email)){
-            return json_encode(array("ok"=>false, "response"=>"email"));
+            return array("ok"=>false, "response"=>"Invalid email");
         }
+        
         $phone1 = is_numeric(secure_name($GLOBALS["data"]["phone1"]))?secure_name($GLOBALS["data"]["phone1"]):null;
         if(!$phone1){
-            return json_encode(array("ok"=>false, "response"=>"phone1"));
+            return array("ok"=>false, "response"=>"Invalid phone number \"$phone1\"");
+        }
+        if(strlen("$phone1")!=9){
+            return array("ok"=>false, "response"=>"Invalid phone number \"$phone1\"");
+        }
+        $prefixes = ["80", "81", "82", "85", "99", "90"];
+        $valid = false;
+        foreach ($prefixes as $prefix) {
+            if (str_starts_with($phone1, $prefix)) {
+                $valid = true;
+                break;
+            }
+        }
+        if (!$valid) {
+            return array("ok"=>false, "response"=>"Invalid phone number \"$phone1\"");
         }
         $phone2 = $GLOBALS["data"]["phone2"]?(secure_name($GLOBALS["data"]["phone2"])):null;
+        if($phone2){
+            if(strlen("$phone2")!=9){
+                return array("ok"=>false, "response"=>"Invalid phone number \"$phone2\"");
+            }
+            $valid = false;
+            foreach ($prefixes as $prefix) {
+                if (str_starts_with($phone2, $prefix)) {
+                    $valid = true;
+                    break;
+                }
+            }
+            if (!$valid) {
+                return array("ok"=>false, "response"=>"Invalid phone number \"$phone2\"");
+            } 
+        }
+
         $address = secure_name($GLOBALS["data"]["address"]);
         $etat_civil = secure_name($GLOBALS["data"]["etat_civil"]);
         $prov_id = secure_name($GLOBALS["data"]["province_id"]);
         $role_id = "02";
         $dt = DateTime::createFromFormat('U.u', microtime(true));
-        $temp_id = password_hash(base64_encode($GLOBALS["data"]["email"])
-            .base64_encode($fname)
+        $temp_id = password_hash(base64_encode($fname)
             .base64_encode($phone1)
             .base64_encode($email)
             .base64_encode($role_id)
@@ -119,9 +149,9 @@ function register_admin(){
             "roleID"=>$role_id,
             "email"=>$email
         );
-        return json_encode(array("ok"=>true, "response"=>true, "data"=>$data));
+        return array("ok"=>true, "response"=>true, "data"=>$data);
     }
     catch(Exception $e){
-        return json_encode(array("ok"=>false, "response"=>$e->getMessage()));
+        return array("ok"=>false, "response"=>$e->getMessage());
     }
 }

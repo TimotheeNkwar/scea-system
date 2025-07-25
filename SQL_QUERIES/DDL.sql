@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS persons(
     birthplace VARCHAR(30),
     gender INT DEFAULT 1,
     email VARCHAR(40) UNIQUE,
-    phone_number_1 BIGINT,
-    phone_number_2 BIGINT,
+    phone_number_1 BIGINT UNIQUE,
+    phone_number_2 BIGINT UNIQUE,
     role_id VARCHAR(5),
     enlisment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     temp_id VARCHAR(200) UNIQUE,
@@ -254,3 +254,6 @@ CREATE TABLE old_logs(
     FOREIGN KEY (person_id) REFERENCES persons(person_id)
 );
 
+
+
+SELECT * FROM persons;

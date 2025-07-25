@@ -29,24 +29,16 @@ try{
                 case "e":
                     if(true){
                         include("../private_mec/generale/method.php");
-                        include("../private_mec/admin/register_admin.php");
+                        include("../private_mec/generale/login.php");
                         $GLOBALS["data"] = array(
-                            "fname"=>"NGOY",
-                            "sname"=>"kitenge",
-                            "tname"=>"cled",
-                            "birthdate"=>"2004-07-19",
-                            "birthplace"=>"kimpese",
-                            "gender"=> 1,
-                            "email"=>"cledngoy@gmail.com",
-                            "phone1"=>905338740912,
-                            "phone2"=>null,
-                            "address"=>"Yapim 43 door 6",
-                            "etat_civil"=>1,
-                            "province_id"=>"HK"
+                            "user"=>"905338740912",
+                            "password"=>"Ngoy0001"
                         );
-                        $reg = register_admin();
+                        $log = login();
                         
-                        echo $reg;
+                        echo "<pre>";
+                        print_r($log);
+                        echo json_encode(page_login());
                         exit;
                     }
             }

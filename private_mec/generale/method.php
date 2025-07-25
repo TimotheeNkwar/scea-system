@@ -150,3 +150,49 @@ function verify_email($email) {
     return false;
 }
 
+function try_login($email=null, $password=null, $phone=null, $user_id=null, $path="../"){
+    try{
+        $email = secure_name($email);
+        $password  = secure_name($password);
+        $phone = secure_name($phone);
+        $user_id = secure_name($user_id);
+        if(!$email && !$phone && !$user_id || !$password){
+            return array("ok"=>false, "response"=>"Invalid user or password");
+        }
+        $sql= file_get_contents($path."private_qwr/generale/002_login.sql");
+        $prep = $GLOBALS["_login_"]["connection"]->prepare($sql);
+        $prep->bindParam(":short_id", $user_id);
+        $prep->bindParam(":full_id", $user_id);
+        $prep->bindParam(":email", $email);
+        $prep->bindParam(":phone1", $phone);
+        $prep->bindParam(":phone2", $phone);
+        $prep->execute();
+        $fetch = $prep->fetch();
+        $prep->closeCursor();
+        if(!$fetch){
+            return json_encode(array("ok"=>false, "response"=>"Invalid user"));
+        }
+        if(!password_verify($password, $fetch["password"])){
+            return json_encode(array("ok"=>false, "response"=>"Invalid password"));
+        }
+        $short_id = $fetch["short_id"];
+        $phone = $fetch["phone"];
+        $role = $fetch["role_id"];
+        $email = $fetch["email"];
+        $data = array(
+            "sid"=>$short_id,
+            "phone"=>$phone,
+            "r"=>$role,
+            "email"=>$email,
+            "password"=>$password
+        );
+        $jwt = createJWT($data);
+        createCookie("token", $jwt);
+        return array("ok"=>true, "response"=>true, "data"=>$data);
+
+    }
+    catch(Exception $e){
+        return array("ok"=>false, "response"=>$e->getMessage());
+    }
+}
+
