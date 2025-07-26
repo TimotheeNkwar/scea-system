@@ -29,16 +29,11 @@ try{
                 case "e":
                     if(true){
                         include("../private_mec/generale/method.php");
-                        include("../private_mec/generale/login.php");
-                        $GLOBALS["data"] = array(
-                            "user"=>"905338740912",
-                            "password"=>"Ngoy0001"
-                        );
-                        $log = login();
+                        include("../private_mec/generale/check_if_exists.php");
+
                         
                         echo "<pre>";
-                        print_r($log);
-                        echo json_encode(page_login());
+                        print_r(check_person());
                         exit;
                     }
             }
