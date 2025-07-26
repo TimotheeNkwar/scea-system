@@ -33,7 +33,7 @@ function register_admin(){
         if(strlen("$phone1")!=9){
             return array("ok"=>false, "response"=>"Invalid phone number \"$phone1\"");
         }
-        $prefixes = ["80", "81", "82", "85", "99", "90"];
+        $prefixes = ["81", "82", "83", "84", "85", "89", "90", "91", "97", "99"];
         $valid = false;
         foreach ($prefixes as $prefix) {
             if (str_starts_with($phone1, $prefix)) {
